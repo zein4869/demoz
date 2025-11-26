@@ -1,0 +1,52 @@
+name: Flutter Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Setup Flutter SDK
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.3' # đổi nếu bạn dùng version khác
+          channel: 'stable'
+
+      # 3️⃣ Cache dependencies
+      - name: Cache Flutter packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            ${{ github.workspace }}/.dart_tool
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      # 4️⃣ Get dependencies
+      - name: Flutter pub get
+        run: flutter pub get
+
+      # 5️⃣ Run tests (tùy chọn)
+      - name: Run Flutter tests
+        run: flutter test
+
+      # 6️⃣ Build APK release
+      - name: Build Flutter APK
+        run: flutter build apk --debug
+
+      # 7️⃣ Upload artifact (tải xuống sau khi build)
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
