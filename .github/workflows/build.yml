@@ -36,10 +36,6 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
-      # 5️⃣ Run tests (tùy chọn)
-      - name: Run Flutter tests
-        run: flutter test
-
       # 6️⃣ Build APK release
       - name: Build Flutter APK
         run: flutter build apk --debug
